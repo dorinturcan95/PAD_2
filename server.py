@@ -1,7 +1,16 @@
-import socket
-import struct
 import sys
 import json
+import struct
+import socket
+
+ADDR = '239.239.250.1'
+PORT = 8001
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+sock.bind(('', PORT))
+mreq = struct.pack("4sl", socket.inet_aton(ADDR), socket.INADDR_ANY)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
 
 class Group:
@@ -26,7 +35,7 @@ class Group:
 
         relations = len(self.relation)
 
-        # Receive/respond loop (bulca)
+        # Receive/respond loop
 
         while True:
             print("Astepare conexiuni")
@@ -48,7 +57,7 @@ class Group:
 
         # creare socket TCP
         sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock_tcp.connect(self.ip_tcp, self.port_tcp)
+        sock_tcp.connect(self.ip_tcp)
 
         while True:
             clientsocket, addr = sock_tcp.accept()
